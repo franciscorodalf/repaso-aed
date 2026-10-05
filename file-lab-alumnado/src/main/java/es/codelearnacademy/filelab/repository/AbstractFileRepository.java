@@ -1,39 +1,83 @@
 package es.codelearnacademy.filelab.repository;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public abstract class AbstractFileRepository<T, ID> implements IRepository<T, ID> {
-
-    @Override
-    public List<T> findAll() {
-        throw new UnsupportedOperationException("Función no implementada");
-    }
-
-    @Override
-    public Optional<T> findById(ID id) {
-        throw new UnsupportedOperationException("Función no implementada");
-    }
-
-    @Override
-    public boolean create(T entity) {
-        throw new UnsupportedOperationException("Función no implementada");
-    }
-
-    @Override
-    public boolean update(T entity) {
-        throw new UnsupportedOperationException("Función no implementada");
-    }
-
-    @Override
-    public boolean delete(ID id) {
-        throw new UnsupportedOperationException("Función no implementada");
-    }
 
     protected abstract ID getId(T entity);
 
     protected abstract List<T> readAll() throws IOException;
 
     protected abstract void writeAll(List<T> entities) throws IOException;
+
+    @Override
+    public List<T> findAll() {
+        try {
+            return readAll();
+        } catch (Exception e) {
+            return List.of();
+        }
+    }
+
+    @Override
+    public Optional<T> findById(ID id) {
+        try {
+            List<T> lista = readAll();
+            for (T t : lista) {
+                if (getId(t).equals(id)) {
+                    return Optional.of(t);
+                }
+            }
+            return Optional.empty();
+        } catch (IOException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public boolean create(T entity) {
+        try {
+            List<T> lista = new ArrayList<>(readAll());
+            for (T t : lista) {
+                if (getId(t).equals(getId(entity))) {
+                    return false;
+                }
+            }
+
+            lista.add(entity);
+            writeAll(lista);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+
+    }
+
+    @Override
+    public boolean update(T entity) {
+        try {
+            List<T> lista = new ArrayList<>(readAll());
+            for (int i = 0; i < lista.size(); i++) {
+                if (lista.size(i).contains(getId(entity))) {
+                    
+                }
+            }
+            lista.(entity);
+            writeAll(lista);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+
+    }
+
+    @Override
+    public boolean delete(ID id) {
+        throw new UnsupportedOperationException("Función no implementada");
+    }
 }

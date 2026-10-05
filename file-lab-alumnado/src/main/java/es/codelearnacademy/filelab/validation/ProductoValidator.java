@@ -8,6 +8,8 @@ public final class ProductoValidator {
     }
 
     public static void validar(Producto producto) {
-        throw new UnsupportedOperationException("Función no implementada");
+        if (producto == null || producto.id() <= 0 || producto.nombre() == null || producto.nombre().isBlank() || producto.precio() < 0 || producto.stock() < 0) {
+            throw new IllegalArgumentException("Producto contiene nulo o datos invalidos");
+        }
     }
 }
