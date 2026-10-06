@@ -1,8 +1,6 @@
 package es.codelearnacademy.filelab.repository;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,13 +17,17 @@ public abstract class AbstractFileRepository<T, ID> implements IRepository<T, ID
     public List<T> findAll() {
         try {
             return readAll();
-        } catch (Exception e) {
+        } catch (IOException e) {
             return List.of();
         }
     }
 
     @Override
     public Optional<T> findById(ID id) {
+        if (id == null) {
+            return Optional.empty();
+        }
+
         try {
             List<T> lista = readAll();
             for (T t : lista) {
@@ -41,6 +43,9 @@ public abstract class AbstractFileRepository<T, ID> implements IRepository<T, ID
 
     @Override
     public boolean create(T entity) {
+        if (entity == null) {
+            return false;
+        }
         try {
             List<T> lista = new ArrayList<>(readAll());
             for (T t : lista) {
@@ -60,16 +65,21 @@ public abstract class AbstractFileRepository<T, ID> implements IRepository<T, ID
 
     @Override
     public boolean update(T entity) {
+        if (entity == null) {
+            return false;
+        }
+
         try {
             List<T> lista = new ArrayList<>(readAll());
             for (int i = 0; i < lista.size(); i++) {
-                if (lista.size(i).contains(getId(entity))) {
-                    
+                if (getId(lista.get(i)).equals(getId(entity))) {
+                    lista.set(i, entity);
+                    writeAll(lista);
+                    return true;
                 }
             }
-            lista.(entity);
-            writeAll(lista);
-            return true;
+
+            return false;
         } catch (IOException e) {
             return false;
         }
@@ -78,6 +88,22 @@ public abstract class AbstractFileRepository<T, ID> implements IRepository<T, ID
 
     @Override
     public boolean delete(ID id) {
-        throw new UnsupportedOperationException("Función no implementada");
+        if (id == null) {
+            return false;
+        }
+
+        try {
+            List<T> lista = new ArrayList<>(readAll());
+            for (int i = 0; i < lista.size(); i++) {
+                if (getId(lista.get(i)).equals(id)) {
+                    lista.remove(i);
+                    writeAll(lista);
+                    return true;
+                }
+            }
+            return false;
+        } catch (IOException e) {
+            return false;
+        }
     }
 }
