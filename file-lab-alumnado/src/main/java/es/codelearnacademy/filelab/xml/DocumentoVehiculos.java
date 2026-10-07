@@ -7,6 +7,10 @@ import es.codelearnacademy.filelab.model.Vehiculo;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Envoltorio XML para la lista de vehículos: raíz {@code <vehiculos>} y un
+ * {@code <vehiculo>} por elemento. Ver {@link DocumentoProductos}.
+ */
 @JacksonXmlRootElement(localName = "vehiculos")
 public class DocumentoVehiculos {
 
@@ -14,18 +18,28 @@ public class DocumentoVehiculos {
     @JacksonXmlProperty(localName = "vehiculo")
     private List<Vehiculo> vehiculos = new ArrayList<>();
 
+    /** Constructor vacío requerido por Jackson. */
     public DocumentoVehiculos() {
     }
 
+    /**
+     * @param vehiculos vehículos que contendrá el documento
+     */
     public DocumentoVehiculos(List<Vehiculo> vehiculos) {
         this.vehiculos = vehiculos;
     }
 
+    /**
+     * @return lista de vehículos del documento
+     */
     public List<Vehiculo> getVehiculos() {
-        throw new UnsupportedOperationException("Función no implementada");
+        return vehiculos;
     }
 
+    /**
+     * @param vehiculos lista de vehículos
+     */
     public void setVehiculos(List<Vehiculo> vehiculos) {
-        throw new UnsupportedOperationException("Función no implementada");
+        this.vehiculos = vehiculos;
     }
 }

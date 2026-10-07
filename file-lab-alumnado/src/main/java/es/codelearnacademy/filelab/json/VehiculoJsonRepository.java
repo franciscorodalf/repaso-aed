@@ -1,13 +1,19 @@
 package es.codelearnacademy.filelab.json;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import es.codelearnacademy.filelab.model.Vehiculo;
 import es.codelearnacademy.filelab.repository.AbstractFileRepository;
 import es.codelearnacademy.filelab.repository.IVehiculoRepository;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Repositorio de vehículos en JSON (mismo esquema que {@link ProductoJsonRepository}).
+ */
 public class VehiculoJsonRepository
         extends AbstractFileRepository<Vehiculo, String>
         implements IVehiculoRepository {
@@ -15,22 +21,30 @@ public class VehiculoJsonRepository
     private final Path path;
     private final ObjectMapper mapper = new ObjectMapper();
 
+    /**
+     * @param path fichero JSON
+     */
     public VehiculoJsonRepository(Path path) {
         this.path = path;
     }
 
     @Override
     protected String getId(Vehiculo vehiculo) {
-        throw new UnsupportedOperationException("Función no implementada");
+        return vehiculo.matricula();
     }
 
+    /** Lee el array JSON; TypeReference conserva el genérico {@code List<Vehiculo>}. */
     @Override
     protected List<Vehiculo> readAll() throws IOException {
-        throw new UnsupportedOperationException("Función no implementada");
+        if (!Files.exists(path)) {
+            return new ArrayList<>();
+        }
+        return mapper.readValue(path.toFile(), new TypeReference<List<Vehiculo>>() { });
     }
 
+    /** Escribe la lista completa como array JSON. */
     @Override
     protected void writeAll(List<Vehiculo> vehiculos) throws IOException {
-        throw new UnsupportedOperationException("Función no implementada");
+        mapper.writeValue(path.toFile(), vehiculos);
     }
 }
